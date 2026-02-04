@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Generator - daisp.live</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .output-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .output-section.active {
+            display: block;
+        }
+
+        .output-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 8px;
+            background: #000;
+            margin-bottom: 15px;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status.loading {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(25, 118, 210, 0.3);
+            border-radius: 50%;
+            border-top-color: #1976d2;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .download-btn:hover {
+            background: #764ba2;
+        }
+
+        .error-details {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 AI Video Generator</h1>
+        <p class="subtitle">Create videos from text using AI</p>
+
+        <form id="videoForm">
+            <div class="form-group">
+                <label for="prompt">Enter Your Video Prompt:</label>
+                <textarea 
+                    id="prompt" 
+                    name="prompt" 
+                    placeholder="Example: A beautiful sunset over the ocean with waves crashing on the beach..."
+                    required
+                ></textarea>
+            </div>
+            <button type="submit" class="button" id="generateBtn">Generate Video</button>
+        </form>
+
+        <div class="output-section" id="outputSection">
+            <h2>Generated Video</h2>
+            <div class="status" id="status"></div>
+            <video id="videoOutput" controls></video>
+            <button class="download-btn" id="downloadBtn">Download Video</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://daisp-video-ai.onrender.com';
+
+        const form = document.getElementById('videoForm');
+        const promptInput = document.getElementById('prompt');
+        const generateBtn = document.getElementById('generateBtn');
+        const outputSection = document.getElementById('outputSection');
+        const statusDiv = document.getElementById('status');
+        const videoOutput = document.getElementById('videoOutput');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                showStatus('Please enter a prompt', 'error');
+                return;
+            }
+
+            generateBtn.disabled = true;
+            outputSection.classList.add('active');
+            showStatus('<span class="spinner"></span>Generating your video...', 'loading');
+
+            try {
+                const response = await fetch(`${API_URL}/api/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.status === 'success' && data.video_url) {
+                    videoOutput.src = data.video_url;
+                    showStatus('✓ Video generated successfully!', 'success');
+                } else if (data.error) {
+                    throw new Error(data.error);
+                } else {
+                    throw new Error('Unknown error occurred');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                let errorMsg = error.message || 'An error occurred';
+                if (errorMsg.includes('HF_TOKEN')) {
+                    errorMsg += '<div class="error-details">Note: The HuggingFace API token needs to be configured on the server. Please contact the administrator.</div>';
+                }
+                showStatus(`✗ Error: ${errorMsg}`, 'error');
+                outputSection.classList.remove('active');
+            } finally {
+                generateBtn.disabled = false;
+            }
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            if (videoOutput.src) {
+                const link = document.createElement('a');
+                link.href = videoOutput.src;
+                link.download = 'generated-video.mp4';
+                link.click();
+            }
+        });
+
+        function showStatus(message, type) {
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+        }
+    </script>
+</body>
+</html>
