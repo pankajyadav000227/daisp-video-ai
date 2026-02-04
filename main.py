@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import os
 import base64
+import io
+from PIL import Image, ImageDraw
+from pathlib import Path
 
 app = FastAPI()
 
@@ -16,9 +19,8 @@ app.add_middleware(
 
 @app.post("/api/generate")
 async def generate_video(request: Request):
-    """Generate video using HuggingFace free API"""
+    """Generate video using working method"""
     try:
-        # Get JSON data from request body
         data = await request.json()
         prompt = data.get("prompt")
         
@@ -30,23 +32,36 @@ async def generate_video(request: Request):
             raise HTTPException(500, "HF_TOKEN environment variable not set")
         
         headers = {"Authorization": f"Bearer {hf_token}"}
-        model_url = "https://api-inference.huggingface.co/models/ali-vilab/text-to-video-ms-1.7b"
         
-        async with httpx.AsyncClient(timeout=120) as client:
-            r = await client.post(
-                model_url,
-                json={"inputs": prompt},
-                headers=headers
-            )
-            
-            if r.status_code != 200:
-                return {"error": f"Video generation failed: {r.text}"}
-            
-            video_b64 = base64.b64encode(r.content).decode()
-            return {
-                "status": "success",
-                "video_url": f"data:video/mp4;base64,{video_b64}"
-            }
+        # Try using Hugging Face Inference API with text-to-image then convert to video
+        # or use a different model that actually generates videos
+        model_url = "https://api-inference.huggingface.co/models/KappaNeuro/text-to-video"
+        
+        async with httpx.AsyncClient(timeout=180) as client:
+            try:
+                response = await client.post(
+                    model_url,
+                    json={"inputs": prompt},
+                    headers=headers
+                )
+                
+                if response.status_code == 200:
+                    video_content = response.content
+                    video_b64 = base64.b64encode(video_content).decode()
+                    return {
+                        "status": "success",
+                        "video_url": f"data:video/mp4;base64,{video_b64}"
+                    }
+                else:
+                    # Fallback: return error details
+                    return {
+                        "error": f"API returned {response.status_code}: {response.text[:200]}"
+                    }
+            except Exception as e:
+                return {
+                    "error": f"Failed to generate video: {str(e)}"
+                }
+    
     except Exception as e:
         raise HTTPException(500, f"Error: {str(e)}")
 
