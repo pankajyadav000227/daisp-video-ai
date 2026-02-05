@@ -203,7 +203,7 @@ async def list_voices():
 
 @app.delete("/api/heygen/video/{video_id}")
 async def delete_video(video_id: str):
-    """Delete a video"""
+        """Delete a video"""
     try:
         service = get_heygen_service()
         result = service.delete_video(video_id)
