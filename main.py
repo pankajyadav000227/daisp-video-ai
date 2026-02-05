@@ -96,43 +96,6 @@ Duration: 5 seconds
                                     }
                                         except Exception as e:
                                                 return {"status": "error", "error": str(e)}
-
-[Scene 2: Main Content]
-Voiceover: Let's explore the key aspects of {prompt}
-Visuals: High-quality footage, animations, and visual effects
-B-roll: Relevant footage supporting the topic
-Duration: 20 seconds
-
-[Scene 3: Key Insights]
-Voiceover: Here are some important details about {prompt}
-Visuals: Infographics, charts, and detailed shots
-Callout: Important points highlighted on screen
-Duration: 15 seconds
-
-[Scene 4: Conclusion]
-Voiceover: Thank you for watching this video about {prompt}
-Visuals: Recap of main points with professional transitions
-Call-to-Action: Subscribe and like for more content
-Duration: 5 seconds
-
-[Scene 5: Credits]
-Visuals: Rolling credits with background music
-Text overlay: Thank you to all contributors
-Duration: 3 seconds
-
-Total Duration: 48 seconds"""
-        
-        return {
-            "status": "success",
-            "script": demo_script,
-            "prompt": prompt,
-            "note": "Demo script generated. For AI-powered scripts, configure Groq or other LLM API keys."
-        }
-    except Exception as e:
-        return {"error": f"Error generating script: {str(e)}"}
-
-@app.post("/api/generate-video")
-async def generate_video(request: Request):
     """
     Generate video combining image and script - demo version
     """
