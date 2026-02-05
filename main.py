@@ -88,6 +88,12 @@ Voiceover: Welcome to our video about {prompt}
 Visuals: Engaging opening sequence with smooth transitions
 Text overlay: "\"" + prompt + "\"" + """
 Duration: 5 seconds
+    """
+        return {
+                "status": "success",
+                        "script": prompt,
+                                "note": "Demo script template - use with FastAPI endpoints"
+                                    }
 
 [Scene 2: Main Content]
 Voiceover: Let's explore the key aspects of {prompt}
