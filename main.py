@@ -4,6 +4,7 @@ import base64
 import json
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
+from heygen_service import get_heygen_service
 
 app = FastAPI()
 
@@ -160,3 +161,78 @@ async def health():
         "service": "AI Content Generator",
         "features": ["image_generation", "script_generation", "video_generation"]
     }
+
+
+# HeyGen API Endpoints
+from pydantic import BaseModel
+
+class VideoGenerationRequest(BaseModel):
+    text: str
+    avatar_id: str = None
+    voice_id: str = None
+    title: str = None
+
+@app.post("/api/heygen/generate-video")
+async def generate_video(request: VideoGenerationRequest):
+    """Generate a video using HeyGen API"""
+    try:
+        service = get_heygen_service()
+        result = service.create_video(
+            text=request.text,
+            avatar_id=request.avatar_id,
+            voice_id=request.voice_id,
+            title=request.title
+        )
+        return {"status": "success", "data": result}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+@app.get("/api/heygen/video/{video_id}")
+async def get_video(video_id: str):
+    """Get video status and details"""
+    try:
+        service = get_heygen_service()
+        result = service.get_video(video_id)
+        return {"status": "success", "data": result}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+@app.get("/api/heygen/videos")
+async def list_videos(limit: int = 10, offset: int = 0):
+    """List all videos"""
+    try:
+        service = get_heygen_service()
+        result = service.list_videos(limit=limit, offset=offset)
+        return {"status": "success", "data": result}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+@app.get("/api/heygen/avatars")
+async def list_avatars():
+    """Get available avatars"""
+    try:
+        service = get_heygen_service()
+        result = service.list_avatars()
+        return {"status": "success", "data": result}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+@app.get("/api/heygen/voices")
+async def list_voices():
+    """Get available voices"""
+    try:
+        service = get_heygen_service()
+        result = service.list_voices()
+        return {"status": "success", "data": result}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+@app.delete("/api/heygen/video/{video_id}")
+async def delete_video(video_id: str):
+    """Delete a video"""
+    try:
+        service = get_heygen_service()
+        result = service.delete_video(video_id)
+        return {"status": "success", "data": result}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
