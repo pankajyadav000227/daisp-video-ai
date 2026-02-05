@@ -96,6 +96,9 @@ Duration: 5 seconds
                                     }
                                         except Exception as e:
                                                 return {"status": "error", "error": str(e)}
+
+                                                @app.post("/api/generate-video")
+                                                async def generate_video(request: Request):
     """
     Generate video combining image and script - demo version
     """
