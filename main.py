@@ -94,6 +94,8 @@ Duration: 5 seconds
                         "script": prompt,
                                 "note": "Demo script template - use with FastAPI endpoints"
                                     }
+                                        except Exception as e:
+                                                return {"status": "error", "error": str(e)}
 
 [Scene 2: Main Content]
 Voiceover: Let's explore the key aspects of {prompt}
