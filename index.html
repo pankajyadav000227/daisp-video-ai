@@ -3,462 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Generator - daisp.live</title>
+    <title>HeyGen Video AI - Professional Video Generation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1em;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 1em;
-            resize: vertical;
-            min-height: 100px;
-            transition: border-color 0.3s;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .output-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .output-section.active {
-            display: block;
-        }
-
-        .output-section h2 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        video {
-            width: 100%;
-            border-radius: 8px;
-            background: #000;
-            margin-bottom: 15px;
-        }
-
-        .status {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .status.loading {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .status.success {
-            background: #e8f5e9;
-            color: #388e3c;
-        }
-
-        .status.error {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(25, 118, 210, 0.3);
-            border-radius: 50%;
-            border-top-color: #1976d2;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .download-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            cursor: pointer;
-            border: none;
-            font-size: 1em;
-            transition: background 0.3s;
-            margin-top: 10px;
-        }
-
-        .download-btn:hover {
-            background: #764ba2;
-        }
-
-        .error-details {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #856404;
-        }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .main-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .card { border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        .btn-generate { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 12px 30px; font-size: 16px; }
+        .video-list-item { border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; margin-bottom: 10px; background: white; }
+        .status-badge { padding: 5px 15px; border-radius: 20px; font-size: 12px; }
+        .status-pending { background: #ffc107; }
+        .status-completed { background: #28a745; color: white; }
+        .status-failed { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎬 AI Video Generator</h1>
-        <p class="subtitle">Create videos from text using AI</p>
-
-        <form id="videoForm">
-            <div class="form-group">
-                <label for="prompt">Enter Your Video Prompt:</label>
-                <textarea 
-                    id="prompt" 
-                    name="prompt" 
-                    placeholder="Example: A beautiful sunset over the ocean with waves crashing on the beach..."
-                    required
-                ></textarea>
-            </div>
-            <button type="submit" class="button" id="generateBtn">Generate Video</button>
-        </form>
-
-        <div class="output-section" id="outputSection">
-            <h2>Generated Video</h2>
-            <div class="status" id="status"></div>
-            <video id="videoOutput" controls></video>
-            <button class="download-btn" id="downloadBtn">Download Video</button>
+    <div class="main-container">
+        <div class="header">
+            <h1><i class="fas fa-video"></i> HeyGen Video AI</h1>
+            <p class="lead">Create Professional AI Videos with HeyGen</p>
         </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card"><div class="card-body">
+                    <h4><i class="fas fa-magic"></i> Generate New Video</h4>
+                    <form id="videoForm">
+                        <div class="mb-3"><label class="form-label">Video Text/Script</label>
+                            <textarea class="form-control" id="videoText" rows="4" required placeholder="Enter your video script here..."></textarea></div>
+                        <div class="mb-3"><label class="form-label">Avatar ID (Optional)</label>
+                            <select class="form-select" id="avatarSelect"><option value="">Select Avatar</option></select></div>
+                        <div class="mb-3"><label class="form-label">Voice ID (Optional)</label>
+                            <select class="form-select" id="voiceSelect"><option value="">Select Voice</option></select></div>
+                        <div class="mb-3"><label class="form-label">Video Title</label>
+                            <input type="text" class="form-control" id="videoTitle" placeholder="My Amazing Video"></div>
+                        <button type="submit" class="btn btn-generate btn-primary w-100"><i class="fas fa-play-circle"></i> Generate Video</button>
+                    </form>
+                </div></div>
+            </div>
+            <div class="col-md-6">
+                <div class="card"><div class="card-body">
+                    <h4><i class="fas fa-list"></i> My Videos</h4>
+                    <button class="btn btn-sm btn-outline-primary mb-3" onclick="loadVideos()"><i class="fas fa-sync"></i> Refresh</button>
+                    <div id="videosList"></div>
+                </div></div>
+            </div>
+        </div>
+        <div class="row mt-4"><div class="col-12"><div class="card"><div class="card-body">
+            <h5><i class="fas fa-info-circle"></i> Status</h5>
+            <div id="statusMessage" class="alert alert-info">Ready to generate videos</div>
+        </div></div></div></div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_URL = 'https://daisp-video-ai.onrender.com';
-
-        const form = document.getElementById('videoForm');
-        const promptInput = document.getElementById('prompt');
-        const generateBtn = document.getElementById('generateBtn');
-        const outputSection = document.getElementById('outputSection');
-        const statusDiv = document.getElementById('status');
-        const videoOutput = document.getElementById('videoOutput');
-        const downloadBtn = document.getElementById('downloadBtn');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const prompt = promptInput.value.trim();
-            if (!prompt) {
-                showStatus('Please enter a prompt', 'error');
-                return;
-            }
-
-            generateBtn.disabled = true;
-            outputSection.classList.add('active');
-            showStatus('<span class="spinner"></span>Generating your video...', 'loading');
-
+        const API_BASE = window.location.origin;
+        async function loadAvatars() {
             try {
-                const response = await fetch(`${API_URL}/api/generate`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ prompt: prompt })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
-                }
-
+                const response = await fetch(`${API_BASE}/api/heygen/avatars`);
                 const data = await response.json();
-
-                if (data.status === 'success' && data.video_url) {
-                    videoOutput.src = data.video_url;
-                    showStatus('✓ Video generated successfully!', 'success');
-                } else if (data.error) {
-                    throw new Error(data.error);
-                } else {
-                    throw new Error('Unknown error occurred');
+                if (data.status === 'success' && data.data.avatars) {
+                    const select = document.getElementById('avatarSelect');
+                    data.data.avatars.forEach(avatar => {
+                        const option = document.createElement('option');
+                        option.value = avatar.avatar_id;
+                        option.textContent = avatar.avatar_name;
+                        select.appendChild(option);
+                    });
                 }
+            } catch (error) { console.error('Error loading avatars:', error); }
+        }
+        async function loadVoices() {
+            try {
+                const response = await fetch(`${API_BASE}/api/heygen/voices`);
+                const data = await response.json();
+                if (data.status === 'success' && data.data.voices) {
+                    const select = document.getElementById('voiceSelect');
+                    data.data.voices.forEach(voice => {
+                        const option = document.createElement('option');
+                        option.value = voice.voice_id;
+                        option.textContent = voice.display_name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) { console.error('Error loading voices:', error); }
+        }
+        async function loadVideos() {
+            try {
+                const response = await fetch(`${API_BASE}/api/heygen/videos`);
+                const data = await response.json();
+                const container = document.getElementById('videosList');
+                if (data.status === 'success' && data.data.videos) {
+                    container.innerHTML = data.data.videos.map(video => `
+                        <div class="video-list-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div><strong>${video.title || 'Untitled'}</strong><br><small>${video.video_id}</small><br><span class="status-badge status-${video.status}">${video.status}</span></div>
+                                <div><button class="btn btn-sm btn-info" onclick="checkVideo('${video.video_id}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteVideo('${video.video_id}')"><i class="fas fa-trash"></i></button></div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else { container.innerHTML = '<p class="text-muted">No videos yet</p>'; }
             } catch (error) {
-                console.error('Error:', error);
-                let errorMsg = error.message || 'An error occurred';
-                if (errorMsg.includes('HF_TOKEN')) {
-                    errorMsg += '<div class="error-details">Note: The HuggingFace API token needs to be configured on the server. Please contact the administrator.</div>';
-                }
-                showStatus(`✗ Error: ${errorMsg}`, 'error');
-                outputSection.classList.remove('active');
-            } finally {
-                generateBtn.disabled = false;
+                console.error('Error loading videos:', error);
+                document.getElementById('videosList').innerHTML = '<p class="text-danger">Error loading videos</p>';
             }
-        });
-
-        downloadBtn.addEventListener('click', () => {
-            if (videoOutput.src) {
-                const link = document.createElement('a');
-                link.href = videoOutput.src;
-                link.download = 'generated-video.mp4';
-                link.click();
-            }
-        });
-
-        function showStatus(message, type) {
-            statusDiv.className = `status ${type}`;
-            statusDiv.innerHTML = message;
         }
+        async function checkVideo(videoId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/heygen/video/${videoId}`);
+                const data = await response.json();
+                if (data.status === 'success') { alert(JSON.stringify(data.data, null, 2)); }
+            } catch (error) { alert('Error: ' + error.message); }
+        }
+        async function deleteVideo(videoId) {
+            if (!confirm('Delete this video?')) return;
+            try {
+                const response = await fetch(`${API_BASE}/api/heygen/video/${videoId}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.status === 'success') { showStatus('Video deleted successfully', 'success'); loadVideos(); }
+            } catch (error) { showStatus('Error deleting video', 'danger'); }
+        }
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.className = `alert alert-${type}`;
+            statusEl.textContent = message;
+        }
+        document.getElementById('videoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                text: document.getElementById('videoText').value,
+                avatar_id: document.getElementById('avatarSelect').value || null,
+                voice_id: document.getElementById('voiceSelect').value || null,
+                title: document.getElementById('videoTitle').value || 'New Video'
+            };
+            showStatus('Generating video...', 'warning');
+            try {
+                const response = await fetch(`${API_BASE}/api/heygen/generate-video`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showStatus('Video generation started successfully!', 'success');
+                    document.getElementById('videoForm').reset();
+                    setTimeout(loadVideos, 2000);
+                } else { showStatus('Error: ' + data.error, 'danger'); }
+            } catch (error) { showStatus('Error: ' + error.message, 'danger'); }
+        });
+        window.onload = function() { loadAvatars(); loadVoices(); loadVideos(); };
     </script>
-
-<!-- HeyGen Video Generator Component -->
-<div id="heygenSection" style="margin: 30px 0; padding: 20px; border: 2px solid #4a90e2; border-radius: 8px; background: linear-gradient(135deg, rgba(74, 144, 226, 0.1) 0%, rgba(115, 75, 228, 0.1) 100%);">
-    <h2 style="color: #4a90e2; margin-top: 0;">🎬 Generate AI Video with HeyGen</h2>
-    
-    <div style="margin: 15px 0;">
-        <label for="heygenText" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Script/Text:</label>
-        <textarea id="heygenText" placeholder="Enter your script for the AI avatar..." style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px;"></textarea>
-    </div>
-    
-    <div style="margin: 15px 0;">
-        <label for="heygenAvatar" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Avatar:</label>
-        <select id="heygenAvatar" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-            <option value="wayne-public">Wayne (Default)</option>
-            <option value="">--Loading Avatars--</option>
-        </select>
-    </div>
-    
-    <div style="margin: 15px 0;">
-        <label for="heygenVoice" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Voice:</label>
-        <select id="heygenVoice" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-            <option value="en_us_001">English US (Default)</option>
-            <option value="en_gb_001">English UK</option>
-            <option value="es_es_001">Spanish</option>
-            <option value="fr_fr_001">French</option>
-        </select>
-    </div>
-    
-    <button onclick="generateHeyGenVideo()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #4a90e2 0%, #7344e4 100%); color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s;">Generate HeyGen Video</button>
-    
-    <div id="heygenStatus" style="margin-top: 15px; display: none; padding: 12px; border-radius: 4px; background: #f0f0f0; color: #333;"></div>
-    
-    <div id="heygenResult" style="margin-top: 20px; display: none;">
-        <h3 style="color: #4a90e2;">✓ Video Generated!</h3>
-        <div id="videoContainer" style="margin: 15px 0;"></div>
-        <div id="videoDetails" style="padding: 10px; background: #f9f9f9; border-radius: 4px; border-left: 4px solid #4a90e2;"></div>
-    </div>
-</div>
-
-<script>
-// Load avatars on page load
-document.addEventListener('DOMContentLoaded', loadHeyGenAvatars);
-
-async function loadHeyGenAvatars() {
-    try {
-        const response = await fetch('/api/heygen/avatars');
-        const data = await response.json();
-        
-        if (data.status === 'success' && data.data.data && data.data.data.avatars) {
-            const select = document.getElementById('heygenAvatar');
-            // Clear existing options except the first one
-            select.innerHTML = '';
-            
-            data.data.data.avatars.forEach(avatar => {
-                const option = document.createElement('option');
-                option.value = avatar.avatar_id;
-                option.textContent = avatar.avatar_name || avatar.avatar_id;
-                select.appendChild(option);
-            });
-        }
-    } catch (error) {
-        console.error('Error loading avatars:', error);
-    }
-}
-
-async function generateHeyGenVideo() {
-    const text = document.getElementById('heygenText').value.trim();
-    const avatarId = document.getElementById('heygenAvatar').value;
-    const voiceId = document.getElementById('heygenVoice').value;
-    const statusDiv = document.getElementById('heygenStatus');
-    const resultDiv = document.getElementById('heygenResult');
-    
-    // Validation
-    if (!text) {
-        statusDiv.style.display = 'block';
-        statusDiv.style.background = '#ffebee';
-        statusDiv.style.color = '#c62828';
-        statusDiv.innerHTML = '⚠️ Please enter a script';
-        resultDiv.style.display = 'none';
-        return;
-    }
-    
-    // Show loading state
-    statusDiv.style.display = 'block';
-    statusDiv.style.background = '#e3f2fd';
-    statusDiv.style.color = '#1565c0';
-    statusDiv.innerHTML = '⏳ Generating video... This may take a minute.';
-    resultDiv.style.display = 'none';
-    
-    try {
-        const response = await fetch('/api/heygen/generate-video', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                text: text,
-                avatar_id: avatarId || null,
-                voice_id: voiceId || null
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            const videoData = result.data.data || result.data;
-            statusDiv.style.display = 'block';
-            statusDiv.style.background = '#e8f5e9';
-            statusDiv.style.color = '#2e7d32';
-            statusDiv.innerHTML = `✓ Video created with ID: ${videoData.video_id || 'pending'}`;
-            
-            // Check status
-            setTimeout(() => checkVideoStatus(videoData.video_id), 3000);
-        } else {
-            statusDiv.style.display = 'block';
-            statusDiv.style.background = '#ffebee';
-            statusDiv.style.color = '#c62828';
-            statusDiv.innerHTML = `✗ Error: ${result.error || 'Unknown error'}`;
-            resultDiv.style.display = 'none';
-        }
-    } catch (error) {
-        statusDiv.style.display = 'block';
-        statusDiv.style.background = '#ffebee';
-        statusDiv.style.color = '#c62828';
-        statusDiv.innerHTML = `✗ Error: ${error.message}`;
-        resultDiv.style.display = 'none';
-    }
-}
-
-async function checkVideoStatus(videoId) {
-    try {
-        const response = await fetch(`/api/heygen/video/${videoId}`);
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            const videoData = result.data.data || result.data;
-            const statusDiv = document.getElementById('heygenStatus');
-            const resultDiv = document.getElementById('heygenResult');
-            
-            if (videoData.status === 'completed') {
-                resultDiv.style.display = 'block';
-                document.getElementById('videoContainer').innerHTML = 
-                    `<video width="100%" controls style="border-radius: 4px;">
-                        <source src="${videoData.video_url}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>`;
-                    
-                document.getElementById('videoDetails').innerHTML = 
-                    `<strong>Video ID:</strong> ${videoData.video_id}<br>
-                     <strong>Status:</strong> ${videoData.status}<br>
-                     <strong>Duration:</strong> ${videoData.duration || 'N/A'} seconds`;
-                     
-                statusDiv.style.display = 'none';
-            } else if (videoData.status === 'processing') {
-                const statusDiv = document.getElementById('heygenStatus');
-                statusDiv.innerHTML = '⏳ Still processing... Checking again in 5 seconds.';
-                setTimeout(() => checkVideoStatus(videoId), 5000);
-            } else if (videoData.status === 'failed') {
-                const statusDiv = document.getElementById('heygenStatus');
-                statusDiv.style.background = '#ffebee';
-                statusDiv.style.color = '#c62828';
-                statusDiv.innerHTML = '✗ Video generation failed. Please try again.';
-            }
-        }
-    } catch (error) {
-        console.error('Error checking video status:', error);
-        setTimeout(() => checkVideoStatus(videoId), 5000);
-    }
-}
-</script>
 </body>
 </html>
