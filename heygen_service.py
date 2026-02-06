@@ -22,7 +22,7 @@ class HeyGenService:
     def _get_headers(self) -> Dict[str, str]:
         """Get authorization headers"""
         return {
-            'X-Api-Key': self.api_key,
+            'X-API-KEY': self.api_key,
             'Content-Type': 'application/json'
         }
     
