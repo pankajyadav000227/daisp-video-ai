@@ -42,6 +42,7 @@
                     </form>
                 </div></div>
             </div>
+                <div class="col-md-6"><div class="card"><div class="card-body"><h4><i class="fas fa-book"></i> Audiobook Generator</h4><form id="audiobookForm"><div class="mb-3"><label class="form-label">Topic or Title</label><textarea class="form-control" id="audiobookTopic" rows="3" placeholder="Enter a topic for your audiobook..." required></textarea></div><button type="submit" class="btn btn-generate w-100"><i class="fas fa-microphone"></i> Generate Audiobook</button></form></div></div></div>
             <div class="col-md-6">
                 <div class="card"><div class="card-body">
                     <h4><i class="fas fa-list"></i> My Videos</h4>
@@ -153,6 +154,38 @@
             } catch (error) { showStatus('Error: ' + error.message, 'danger'); }
         });
         window.onload = function() { loadAvatars(); loadVoices(); loadVideos(); };
+        
+// Audiobook Generator Form Handler
+document.getElementById('audiobookForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = {
+        text: document.getElementById('audiobookText').value,
+        voice_id: document.getElementById('audiobookVoice').value || 'alloy',
+        audio_format: 'mp3',
+        title: document.getElementById('audiobookTitle').value || 'Generated Audiobook'
+    };
+    showStatus('Generating audiobook...', 'warning');
+    try {
+        const response = await fetch(`${API_BASE}/api/audiobook/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+            showStatus('Audiobook generated successfully!', 'success');
+            // Create audio player element
+            const audioUrl = data.data.audio_url || data.data.url;
+            const audioHtml = `<div class="alert alert-info mt-3"><a href="${audioUrl}" download class="btn btn-sm btn-primary">Download Audiobook</a></div>`;
+            document.getElementById('audiobookForm').insertAdjacentHTML('afterend', audioHtml);
+            document.getElementById('audiobookForm').reset();
+        } else {
+            showStatus('Error: ' + data.error, 'danger');
+        }
+    } catch (error) {
+        showStatus('Error: ' + error.message, 'danger');
+    }
+});
     </script>
 </body>
 </html>
